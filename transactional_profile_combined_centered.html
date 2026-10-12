@@ -120,6 +120,14 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
   <button id="send" style="display:none" aria-hidden="true"></button>
 </main>
 
+<!-- 開始前の初期フロートボックス（attention-overlay） -->
+<div id="start-overlay" class="attention-overlay">
+  <div class="attention-modal">
+    <p>準備ができたら開始ボタンを押してください</p>
+    <button id="start-btn" class="start-btn">開始</button>
+  </div>
+</div>
+
 <script>
 const COND = "TRANSACTIONAL";
 let run = 0;

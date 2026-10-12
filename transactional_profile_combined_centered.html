@@ -75,9 +75,10 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
 @keyframes typingDot{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
 
 .attention-overlay{position:fixed;inset:0;background:rgba(20,28,38,.42);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}
-.attention-modal{width:min(420px,calc(100vw - 40px));background:#fff;border-radius:14px;box-shadow:0 18px 50px #0004;padding:22px}
-.attention-modal h3{margin:0 0 8px;font-size:18px;color:#25364a}
-.attention-modal p{margin:0 0 14px;font-size:14px;line-height:1.65;color:#4d5966}
+.attention-modal{width:min(420px,calc(100vw - 40px));background:#fff;border-radius:14px;box-shadow:0 18px 50px #0004;padding:22px;text-align:center}
+.attention-modal p{margin:0 0 18px;font-size:15px;line-height:1.6;color:#334155;font-weight:600}
+.start-btn{display:inline-block;width:100%;border:0;border-radius:10px;padding:12px 16px;background:#3475c5;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s}
+.start-btn:hover{background:#285fa3}
 
 @media(max-width:850px){
   body{background:#fff}
@@ -97,7 +98,7 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
   main{width:100%;max-width:none;margin:0;padding:24px;display:flex;justify-content:center;align-items:center}
   .hero,.info{display:none!important}
   .grid{display:flex;justify-content:center;align-items:center;margin:0;width:100%}
-  .chat{width:450px;max-width:min(450px,calc(100vw - 48px));height:860px;max-height:calc(100vh - 48px);margin:0 auto}
+  .chat{width:450px;max-width:min(450px,calc(100vw - 48px));height:760px;max-height:calc(100vh - 48px);margin:0 auto}
 }
 </style>
 </head>
@@ -205,7 +206,7 @@ function showAttentionCheck(id) {
   ov.className = "attention-overlay";
   ov.innerHTML = '<div class="attention-modal">' +
                  '<h3>これで会話は終了です。</h3>' +
-                 '<p>質問票に戻って回答を続けてください。</p>' +
+                 '<p style="margin-top:8px">質問票に戻って回答を続けてください。</p>' +
                  '</div>';
   document.body.appendChild(ov);
 }
@@ -323,16 +324,16 @@ function showProfileCard(id, cb) {
 }
 
 async function manipulation(id) {
-  if(!await say("プロフィール情報を登録しました。年代：" + answers.age + "、家族構成：" + answers.family + "、現在の加入：" + answers.currentInsurance + "、保障目的：" + answers.purpose + "、月額予算：" + answers.budget + "、健康状態：" + answers.health, id)) return;
+  if(!await say("プロフィール情報を登録しました。<br>年代：" + answers.age + "<br>家族構成：" + answers.family + "<br>現在の加入：" + answers.currentInsurance + "<br>保障目的：" + answers.purpose + "<br>月額予算：" + answers.budget + "<br>健康状態：" + answers.health, id)) return;
   if(!await say("追加で確認したい保障項目があれば入力してください。", id)) return;
   if(!await userSay("生活習慣病への保障が気になります", id, 5000)) return;
-  if(!await say("「生活習慣病への保障」を追加条件として登録しました。関連する特約を検索し、候補プランの評価条件に反映します。", id)) return;
+  if(!await say("生活習慣病保障を追加条件として登録しました。関連する特約を検索し、候補プランの評価条件に反映します。", id)) return;
   if(!await userSay("ありがとうございます", id, 5000)) return;
   if(!await say("入力を受け付けました。登録済みの回答内容と追加条件をもとに、適合度の高い保険プランを算出します。", id)) return;
 
   let w = document.createElement("div");
   w.className = "center-wait";
-  w.innerHTML = '保険プランを作成中です<div class="typing-dots"><span>.</span><span>.</span><span>.</span></div>';
+  w.innerHTML = 'あなたのための保険プランを一生懸命作成中です<div class="typing-dots"><span>.</span><span>.</span><span>.</span></div>';
   msgs.appendChild(w);
   msgs.scrollTop = msgs.scrollHeight;
 
@@ -351,9 +352,10 @@ async function manipulation(id) {
   localStorage.setItem("budget", answers.budget);
   localStorage.setItem("health", answers.health);
 
-  if(!await say("キャンペーンのお知らせ：本日保険プランをご成約いただくと、以下の2つのギフトを選んで受け取ることができます。", id)) return;
+  // ギフトキャンペーンの案内メッセージを表示
+  if(!await say("キャンペーン：本日保険プランをご成約いただくと、以下の2つのギフトを選んで受け取ることができます。", id)) return;
 
-  // 選択肢（キャンペーンギフト選択）の表示
+  // ギフトの選択肢リストを表示
   let choiceRow = document.createElement("div");
   choiceRow.className = "row";
   let choiceIcon = document.createElement("div");
@@ -362,7 +364,7 @@ async function manipulation(id) {
 
   let choiceWrap = document.createElement("div");
   choiceWrap.className = "choices";
-  choiceWrap.style.flexDirection = "column"; // 選択肢を縦並びにして読みやすく調整
+  choiceWrap.style.flexDirection = "column";
 
   const giftOptions = [
     { text: "本日1,000円分のギフト券を受け取る", val: "gift_today_1000" },
@@ -376,7 +378,6 @@ async function manipulation(id) {
     btn.style.padding = "10px 14px";
     btn.textContent = opt.text;
     
-    // 手動クリック時の処理（必要に応じて）
     btn.onclick = () => {
       localStorage.setItem("selectedGift", opt.val);
       [...choiceWrap.children].forEach(c => c.classList.remove("auto-selected"));
@@ -389,15 +390,17 @@ async function manipulation(id) {
   choiceRow.append(choiceIcon, choiceWrap);
   msgs.appendChild(choiceRow);
   msgs.scrollTop = msgs.scrollHeight;
-  await sleep(MESSAGE_GAP);
-
 
   await sleep(10000);
   if(id !== run) return;
   showAttentionCheck(id);
 }
 
-setup();
+// 開始ボタンのクリック処理イベントをセット
+$("start-btn").onclick = () => {
+  $("start-overlay").style.display = "none";
+  setup();
+};
 </script>
 </body>
 </html>

@@ -29,7 +29,7 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
 .bubble{max-width:80%;padding:10px 13px;border:2px solid #cbd3dc;background:#fff;border-radius:14px 14px 14px 4px;line-height:1.65;font-size:14px}
 .me .bubble{background:#e8f1ff;border-color:#b8cbe3;border-radius:14px 14px 4px 14px}
 
-/* 入力エリア（手動入力用に有効化） */
+/* 入力エリア */
 .input-container{padding:12px;border-top:1px solid #e4e7eb;display:flex;gap:9px;background:#fff}
 .input-container textarea{flex:1;height:48px;resize:none;border:1px solid #cbd2d9;border-radius:10px;padding:10px;font:inherit;font-size:14px}
 .input-container button{width:72px;border:0;border-radius:9px;background:#3475c5;color:#fff;font-weight:700;cursor:pointer}
@@ -41,8 +41,8 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
 .typing i:nth-child(3){animation-delay:.3s}
 @keyframes b{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
 
-.choices{display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%}
-.choice{border:1px solid #cbd5df;background:#fff;border-radius:12px;padding:10px 14px;font-size:13px;cursor:pointer;text-align:left;transition:all .2s}
+.choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;width:100%}
+.choice{border:1px solid #cbd5df;background:#fff;border-radius:18px;padding:8px 14px;font-size:13px;cursor:pointer;text-align:left;transition:all .2s;color:#334155}
 .choice:hover{background:#f2f6fa;border-color:#3475c5}
 
 .result{display:flex;gap:11px;width:330px;max-width:100%;background:#fff;border:1px solid #d9dee4;border-radius:12px;padding:10px;box-shadow:0 3px 10px #0000000b}
@@ -72,10 +72,26 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
 .typing-dots span:nth-child(3){animation-delay:.4s}
 @keyframes typingDot{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
 
+/* 初期画面スタート用オーバーレイ */
 .attention-overlay{position:fixed;inset:0;background:rgba(20,28,38,.42);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}
 .attention-modal{width:min(420px,calc(100vw - 40px));background:#fff;border-radius:14px;box-shadow:0 18px 50px #0004;padding:22px;text-align:center}
 .attention-modal p{margin:0 0 18px;font-size:15px;line-height:1.6;color:#334155;font-weight:600}
 .start-btn{display:inline-block;width:100%;border:0;border-radius:10px;padding:12px 16px;background:#3475c5;color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+
+/* チャットボックス下の終了メッセージ（赤字） */
+.end-notice {
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: #fff0f0;
+  border: 1px solid #fca5a5;
+  border-radius: 10px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.6;
+  display: none; /* 初期状態は非表示 */
+}
 
 @media(min-width:851px){
   body {
@@ -89,7 +105,7 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
   
   main {
     width: 100%;
-    height: 100vh; /* 親要素の高さを画面全体にする */
+    height: 100vh;
     max-width: none;
     margin: 0;
     padding: 24px;
@@ -104,15 +120,19 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
     align-items: center;
     margin: 0;
     width: 100%;
-    height: 100%; /* 親要素の高さを継承 */
+    height: 100%;
+  }
+
+  .chat-wrapper {
+    width: 450px;
+    max-width: min(450px, calc(100vw - 48px));
+    margin: 0 auto;
   }
 
   .chat {
-    width: 450px;
-    max-width: min(450px, calc(100vw - 48px));
-    height: calc(860px - 48px) !important; /* 画面上下に24pxずつの余白を残して最大縦伸び */
+    width: 100%;
+    height: 720px !important;
     max-height: none !important;
-    margin: 0 auto;
   }
 }
 </style>
@@ -121,22 +141,29 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
 
 <main>
   <div class="grid">
-    <section class="chat">
-      <div class="head">
-        <div id="topav" class="av"></div>
-        <div>
-          <div id="nm" class="name"></div>
-          <div id="rl" class="role"></div>
+    <div class="chat-wrapper">
+      <section class="chat">
+        <div class="head">
+          <div id="topav" class="av"></div>
+          <div>
+            <div id="nm" class="name"></div>
+            <div id="rl" class="role"></div>
+          </div>
         </div>
+        <div id="msgs" class="msgs"></div>
+        
+        <!-- テキスト入力欄 -->
+        <div class="input-container">
+          <textarea id="txt" placeholder="メッセージを入力..." disabled></textarea>
+          <button id="send" disabled>送信</button>
+        </div>
+      </section>
+
+      <!-- チャットボックス下の赤字メッセージ領域 -->
+      <div id="chat-end-notice" class="end-notice">
+        これで会話は終了です。<br>質問票に戻って回答を続けてください。
       </div>
-      <div id="msgs" class="msgs"></div>
-      
-      <!-- テキスト入力欄 -->
-      <div class="input-container">
-        <textarea id="txt" placeholder="メッセージを入力..." disabled></textarea>
-        <button id="send" disabled>送信</button>
-      </div>
-    </section>
+    </div>
   </div>
 </main>
 
@@ -150,7 +177,7 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
 <script>
 const COND = "TRANSACTIONAL";
 let run = 0;
-let answers = { userName:"", age:"", family:"", currentInsurance:"", purpose:"", budget:"", health:"" };
+let answers = { userName:"", age:"", family:"", currentInsurance:"加入していない", purpose:"", budget:"", health:"" };
 
 const $ = x => document.getElementById(x);
 const msgs = $("msgs");
@@ -225,6 +252,62 @@ function getUserInput() {
   });
 }
 
+// セット用カード描画・選択待ち汎用関数
+function showSetCard(title, questions) {
+  return new Promise(resolve => {
+    let selectedTemp = {};
+
+    let r = document.createElement("div");
+    r.className = "row";
+    let a = document.createElement("div");
+    a.className = "mini ai";
+    a.innerHTML = AI_ICON;
+    let b = document.createElement("div");
+    b.className = "profile-card";
+    
+    let html = `<div class="profile-title">${title}</div>`;
+    questions.forEach(x => {
+      html += `<div class="profile-row">
+        <div class="profile-label">${x.label}</div>
+        <div class="profile-options" data-key="${x.key}">
+          ${x.opts.map(o => `<span class="profile-opt" data-value="${o}">${o}</span>`).join('')}
+        </div>
+      </div>`;
+    });
+    html += '<button class="profile-submit-btn" disabled>次へ進む</button>';
+    b.innerHTML = html;
+    r.append(a, b);
+    msgs.appendChild(r);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    const submitBtn = b.querySelector('.profile-submit-btn');
+
+    b.querySelectorAll('.profile-opt').forEach(opt => {
+      opt.onclick = () => {
+        const parent = opt.closest('.profile-options');
+        const key = parent.dataset.key;
+        
+        parent.querySelectorAll('.profile-opt').forEach(el => el.classList.remove('selected'));
+        opt.classList.add('selected');
+        
+        selectedTemp[key] = opt.dataset.value;
+
+        if(Object.keys(selectedTemp).length === questions.length) {
+          submitBtn.disabled = false;
+        }
+      };
+    });
+
+    submitBtn.onclick = () => {
+      Object.assign(answers, selectedTemp);
+      submitBtn.textContent = "送信完了";
+      submitBtn.disabled = true;
+      b.querySelectorAll('.profile-opt').forEach(el => el.style.pointerEvents = 'none');
+      resolve();
+    };
+  });
+}
+
 function result() {
   let r = document.createElement("div");
   r.className = "row";
@@ -242,21 +325,21 @@ function result() {
   msgs.scrollTop = msgs.scrollHeight;
 }
 
+// 会話終了通知（チャットボックスの下に赤字表示）
 function showAttentionCheck(id) {
   if(id !== run) return;
-  let ov = document.createElement("div");
-  ov.className = "attention-overlay";
-  ov.innerHTML = '<div class="attention-modal">' +
-                 '<h3>これで会話は終了です。</h3>' +
-                 '<p style="margin-top:8px">質問票に戻って回答を続けてください。</p>' +
-                 '</div>';
-  document.body.appendChild(ov);
+  const noticeEl = $("chat-end-notice");
+  if(noticeEl) {
+    noticeEl.style.display = "block";
+    noticeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 }
 
 function setup() {
   run++;
   let id = run;
   msgs.innerHTML = "";
+  $("chat-end-notice").style.display = "none";
 
   $("topav").className = "av ai";
   $("topav").innerHTML = AI_ICON;
@@ -273,87 +356,41 @@ async function startFlow(id) {
   answers.userName = await getUserInput();
   
   if(!await say(`${answers.userName}さん、ご入力ありがとうございます。`, id)) return;
-  if(!await say("続いて、以下の項目を選択してプロフィール情報を教えてください。", id)) return;
 
-  // 2. プロフィールカードを表示して手動選択
-  await showProfileCard(id);
+  // 2. ２つのセット形式でプロフィール情報を順番に選択
+  await showProfileSets(id);
 
   // 3. 次の会話展開へ
   manipulation(id);
 }
 
-function showProfileCard(id) {
-  return new Promise(resolve => {
-    const profile = [
-      {key:"age", label:"年代", opts:["20代以下","30代","40代","50代以上"]},
-      {key:"family", label:"家族構成", opts:["独身","夫婦のみ","配偶者と子供","その他"]},
-      {key:"currentInsurance", label:"現在の保険加入", opts:["加入していない","医療保険のみ","生命保険のみ","複数加入中"]},
-      {key:"purpose", label:"最も重視したい備え", opts:["病気やケガの入院費","万が一の遺族保障","がんなどの重い病気","老後の資金準備"]},
-      {key:"budget", label:"月々の予算", opts:["5,000円未満","5,000円〜1万円","1万円〜2万円","2万円以上"]},
-      {key:"health", label:"直近5年以内の健康状態・入院歴", opts:["特に持病・入院歴なし","持病・持続的な服薬あり","過去5年以内に入院歴あり"]}
-    ];
+// 2問モード（基本属性セット -> 希望条件セット）
+async function showProfileSets(id) {
+  // 第1問セット：年齢、家族、既往症
+  if(!await say("まず、基本属性について選択してください。", id)) return;
+  const set1 = [
+    { key: "age", label: "年代", opts: ["20代以下", "30代", "40代", "50代以上"] },
+    { key: "family", label: "家族構成", opts: ["独身", "夫婦のみ", "配偶者と子供", "その他"] },
+    { key: "health", label: "直近5年以内の健康状態・入院歴", opts: ["特に持病・入院歴なし", "持病・持続的な服薬あり", "過去5年以内に入院歴あり"] }
+  ];
+  await showSetCard("基本属性", set1);
 
-    let selectedTemp = {};
-
-    let r = document.createElement("div");
-    r.className = "row";
-    let a = document.createElement("div");
-    a.className = "mini ai";
-    a.innerHTML = AI_ICON;
-    let b = document.createElement("div");
-    b.className = "profile-card";
-    
-    let html = '<div class="profile-title">プロフィール情報</div>';
-    profile.forEach(x => {
-      html += `<div class="profile-row">
-        <div class="profile-label">${x.label}</div>
-        <div class="profile-options" data-key="${x.key}">
-          ${x.opts.map(o => `<span class="profile-opt" data-value="${o}">${o}</span>`).join('')}
-        </div>
-      </div>`;
-    });
-    html += '<button class="profile-submit-btn" id="profile-submit" disabled>決定して送信する</button>';
-    b.innerHTML = html;
-    r.append(a, b);
-    msgs.appendChild(r);
-    msgs.scrollTop = msgs.scrollHeight;
-
-    // 選択肢クリックイベント
-    b.querySelectorAll('.profile-opt').forEach(opt => {
-      opt.onclick = () => {
-        const parent = opt.closest('.profile-options');
-        const key = parent.dataset.key;
-        
-        parent.querySelectorAll('.profile-opt').forEach(el => el.classList.remove('selected'));
-        opt.classList.add('selected');
-        
-        selectedTemp[key] = opt.dataset.value;
-
-        // 全6項目選択完了したら送信ボタン有効化
-        if(Object.keys(selectedTemp).length === profile.length) {
-          b.querySelector('#profile-submit').disabled = false;
-        }
-      };
-    });
-
-    // 決定ボタンクリック
-    b.querySelector('#profile-submit').onclick = () => {
-      Object.assign(answers, selectedTemp);
-      b.querySelector('#profile-submit').textContent = "送信完了";
-      b.querySelector('#profile-submit').disabled = true;
-      b.querySelectorAll('.profile-opt').forEach(el => el.style.pointerEvents = 'none');
-      resolve();
-    };
-  });
+  // 第2問セット：重視したいもの、予算
+  if(!await say("ありがとうございます。次に、ご希望のプラン条件について選択してください。", id)) return;
+  const set2 = [
+    { key: "purpose", label: "最も重視したい備え", opts: ["病気やケガの入院費", "万が一の遺族保障", "がんなどの重い病気", "老後の資金準備"] },
+    { key: "budget", label: "月々の予算", opts: ["5,000円未満", "5,000円〜1万円", "1万円〜2万円", "2万円以上"] }
+  ];
+  await showSetCard("希望条件", set2);
 }
 
 async function manipulation(id) {
-  if(!await say(`プロフィール情報を登録しました。\n・年代：${answers.age}\n・家族構成：${answers.family}\n・現在の加入：${answers.currentInsurance}\n・保障目的：${answers.purpose}\n・月額予算：${answers.budget}\n・健康状態：${answers.health}`, id)) return;
+  if(!await say(`プロフィール情報を登録しました。\n・年代：${answers.age}\n・家族構成：${answers.family}\n・健康状態：${answers.health}\n・保障目的：${answers.purpose}\n・月額予算：${answers.budget}`, id)) return;
   
-// 1. 「生活習慣病の保障は必要ですか？」と問いかけ、ボタン選択を待つ
+  // 1. 「生活習慣病の保障は必要ですか？」と問いかけ、ボタン選択を待つ
   if(!await say("生活習慣病の保障は必要ですか？", id)) return;
   
-  let diseaseCoverage = await getYesNoChoice(id); // 「はい」または「いいえ」を取得
+  let diseaseCoverage = await getYesNoChoice(id);
   answers.lifestyleDisease = diseaseCoverage;
 
   // 2. 「はい」と「いいえ」で回答を分岐
@@ -383,22 +420,21 @@ async function manipulation(id) {
   localStorage.setItem("userName", answers.userName);
   localStorage.setItem("age", answers.age);
   localStorage.setItem("family", answers.family);
-  localStorage.setItem("currentInsurance", answers.currentInsurance);
+  localStorage.setItem("health", answers.health);
   localStorage.setItem("purpose", answers.purpose);
   localStorage.setItem("budget", answers.budget);
-  localStorage.setItem("health", answers.health);
+  localStorage.setItem("lifestyleDisease", answers.lifestyleDisease);
 
   // キャンペーン・ギフト選択
   if(!await say("キャンペーン：本日保険プランをご成約いただくと、以下の2つのギフトを選んで受け取ることができます。", id)) return;
 
   await getGiftChoice(id);
 
-  await sleep(3000);
+  await sleep(2000);
   if(id !== run) return;
   showAttentionCheck(id);
 }
 
-// ギフトの選択処理
 // ギフトの選択処理（選択不可・閲覧のみ）
 function getGiftChoice(id) {
   return new Promise(resolve => {
@@ -421,7 +457,6 @@ function getGiftChoice(id) {
       btn.className = "choice";
       btn.textContent = opt.text;
       
-      // ★ 選択できないように無効化
       btn.disabled = true;
       btn.style.cursor = "not-allowed";
       btn.style.opacity = "0.7";
@@ -433,7 +468,6 @@ function getGiftChoice(id) {
     msgs.appendChild(choiceRow);
     msgs.scrollTop = msgs.scrollHeight;
 
-    // クリックを待たずに少し時間をおいて自動的に次に進む場合
     setTimeout(() => {
       resolve();
     }, MESSAGE_GAP);
@@ -451,7 +485,7 @@ function getYesNoChoice(id) {
 
     let choiceWrap = document.createElement("div");
     choiceWrap.className = "choices";
-    choiceWrap.style.flexDirection = "row"; // 横並びに配置
+    choiceWrap.style.flexDirection = "row";
 
     const options = ["はい", "いいえ"];
 
@@ -464,7 +498,7 @@ function getYesNoChoice(id) {
       
       btn.onclick = () => {
         choiceWrap.querySelectorAll("button").forEach(b => b.disabled = true);
-        add(opt, true); // ユーザーの発言としてメッセージ欄に追加
+        add(opt, true);
         resolve(opt);
       };
       

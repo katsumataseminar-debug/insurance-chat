@@ -233,7 +233,7 @@ function setup() {
   $("topav").className = "av ai";
   $("topav").innerHTML = AI_ICON;
   $("nm").textContent = "あなたがチャットで相談している相手は「保険エキスパートAI」です。";
-  $("rl").textContent = "保険エキスパートAIは、保険会社のこれまでの様々なデータを統合して、加入者にとって最適な保険を数理的に分析し予測することができるAIエージェントです。保険商品全体について情報を持っており、保険会社のあらゆる問題に対応できるように設計され、高い専門性を持つ高速なAIとして設計されています。";
+  $("rl").textContent = "";
 
   startFlow(id);
 }
@@ -324,16 +324,16 @@ function showProfileCard(id, cb) {
 }
 
 async function manipulation(id) {
-  if(!await say("プロフィール情報を登録しました。<br>年代：" + answers.age + "<br>家族構成：" + answers.family + "<br>現在の加入：" + answers.currentInsurance + "<br>保障目的：" + answers.purpose + "<br>月額予算：" + answers.budget + "<br>健康状態：" + answers.health, id)) return;
+  if(!await say("プロフィール情報を登録しました。年代：" + answers.age + "、家族構成：" + answers.family + "、現在の加入：" + answers.currentInsurance + "、保障目的：" + answers.purpose + "、月額予算：" + answers.budget + "、健康状態：" + answers.health, id)) return;
   if(!await say("追加で確認したい保障項目があれば入力してください。", id)) return;
   if(!await userSay("生活習慣病への保障が気になります", id, 5000)) return;
-  if(!await say("生活習慣病保障を追加条件として登録しました。関連する特約を検索し、候補プランの評価条件に反映します。", id)) return;
+  if(!await say("「生活習慣病への保障」を追加条件として登録しました。関連する特約を検索し、候補プランの評価条件に反映します。", id)) return;
   if(!await userSay("ありがとうございます", id, 5000)) return;
   if(!await say("入力を受け付けました。登録済みの回答内容と追加条件をもとに、適合度の高い保険プランを算出します。", id)) return;
 
   let w = document.createElement("div");
   w.className = "center-wait";
-  w.innerHTML = 'あなたのための保険プランを一生懸命作成中です<div class="typing-dots"><span>.</span><span>.</span><span>.</span></div>';
+  w.innerHTML = '保険プランを作成中です<div class="typing-dots"><span>.</span><span>.</span><span>.</span></div>';
   msgs.appendChild(w);
   msgs.scrollTop = msgs.scrollHeight;
 

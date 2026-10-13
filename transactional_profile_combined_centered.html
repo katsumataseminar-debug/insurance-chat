@@ -3,21 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>保険についての調査｜保険プラン提案の対話履歴</title>
+<title>保険についての調査｜保険プラン提案</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f4f6f8;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:#222}
-header{display:none!important;height:66px;background:#fff;border-bottom:1px solid #ddd;align-items:center;padding:0 6%}
-.logo{font-size:24px;font-weight:800;color:#2867aa}
 
 main{max-width:1100px;margin:25px auto;padding:0 18px}
-.hero{padding:27px 32px;border:1px solid #dce5ed;border-radius:16px;background:linear-gradient(120deg,#dfedfa,#fbfdff)}
-.hero h1{margin:0 0 8px}
-.hero p{margin:0;color:#596674}
 .grid{display:grid;grid-template-columns:1fr 450px;gap:23px;margin-top:22px}
-.info{background:#fff;border:1px solid #e1e5e9;border-radius:15px;padding:24px}
 
-.chat{height:610px;background:#fff;border:2px solid #cfd7df;border-radius:15px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 9px 28px #00000010}
+.chat{height:650px;background:#fff;border:2px solid #cfd7df;border-radius:15px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 9px 28px #00000010}
 .head{padding:14px 16px;border-bottom:1px solid #e5e8ec;display:flex;align-items:center;gap:10px}
 .av,.mini{border-radius:50%;display:grid;place-items:center;font-weight:800;flex:none;background:#fff!important;color:#59636f!important;border:1px solid #d9e0e7!important}
 .av{width:46px;height:46px}
@@ -35,20 +29,21 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
 .bubble{max-width:80%;padding:10px 13px;border:2px solid #cbd3dc;background:#fff;border-radius:14px 14px 14px 4px;line-height:1.65;font-size:14px}
 .me .bubble{background:#e8f1ff;border-color:#b8cbe3;border-radius:14px 14px 4px 14px}
 
-.composer, .input-area, .chat-input, .message-input, .input-row, form.composer, .input {
-  display:none !important;
-  height:0 !important;
-  padding:0 !important;
-  margin:0 !important;
-  border:0 !important;
-  overflow:hidden !important;
-}
+/* 入力エリア（手動入力用に有効化） */
+.input-container{padding:12px;border-top:1px solid #e4e7eb;display:flex;gap:9px;background:#fff}
+.input-container textarea{flex:1;height:48px;resize:none;border:1px solid #cbd2d9;border-radius:10px;padding:10px;font:inherit;font-size:14px}
+.input-container button{width:72px;border:0;border-radius:9px;background:#3475c5;color:#fff;font-weight:700;cursor:pointer}
+.input-container button:disabled{background:#adb6c0;cursor:not-allowed}
 
 .typing{display:flex;gap:5px;padding:4px}
 .typing i{width:6px;height:6px;border-radius:50%;background:#8290a0;animation:b 1.1s infinite}
 .typing i:nth-child(2){animation-delay:.15s}
 .typing i:nth-child(3){animation-delay:.3s}
 @keyframes b{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+
+.choices{display:flex;flex-direction:column;gap:8px;margin-top:8px;width:100%}
+.choice{border:1px solid #cbd5df;background:#fff;border-radius:12px;padding:10px 14px;font-size:13px;cursor:pointer;text-align:left;transition:all .2s}
+.choice:hover{background:#f2f6fa;border-color:#3475c5}
 
 .result{display:flex;gap:11px;width:330px;max-width:100%;background:#fff;border:1px solid #d9dee4;border-radius:12px;padding:10px;box-shadow:0 3px 10px #0000000b}
 .pic{width:104px;height:82px;border-radius:9px;background:linear-gradient(145deg,#9dc9e8 0 42%,#6fa66e 43% 62%,#e5eef5 63%);position:relative;overflow:hidden;flex:none}
@@ -57,15 +52,18 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
 .rtext{font-size:12px;color:#66717d;line-height:1.5}
 .link{display:inline-block;margin-top:5px;color:#2769b1;font-size:12px;text-decoration:underline}
 
+/* プロフィールカードスタイル */
 .profile-card{background:#fff;border:1px solid #cbd5df;border-radius:12px;padding:14px;width:360px;max-width:100%;box-shadow:0 3px 10px #0000000b}
 .profile-title{font-weight:800;font-size:15px;margin-bottom:4px;color:#273849}
 .profile-row{padding:10px 0;border-top:1px solid #edf0f3}
 .profile-row:first-of-type{border-top:0}
 .profile-label{font-size:12px;font-weight:750;color:#56616d;margin-bottom:7px}
 .profile-options{display:flex;flex-wrap:wrap;gap:6px}
-.profile-opt{border:1px solid #cbd5df;background:#fff;border-radius:16px;padding:5px 9px;font-size:12px;color:#3d4650}
+.profile-opt{border:1px solid #cbd5df;background:#fff;border-radius:16px;padding:6px 11px;font-size:12px;color:#3d4650;cursor:pointer;user-select:none;transition:all .15s}
+.profile-opt:hover{background:#f0f4f8}
 .profile-opt.selected{background:#e8f1ff;border-color:#3475c5;color:#174f91;font-weight:700;box-shadow:0 0 0 2px #3475c522}
-.profile-done{margin-top:11px;padding:9px 10px;border-radius:8px;background:#eef5fb;color:#245a91;font-size:12px;font-weight:700;text-align:center}
+.profile-submit-btn{width:100%;margin-top:12px;padding:10px;border:0;border-radius:8px;background:#3475c5;color:#fff;font-size:13px;font-weight:700;cursor:pointer}
+.profile-submit-btn:disabled{background:#cbd5df;cursor:not-allowed}
 
 .center-wait{align-self:center;text-align:center;margin:16px auto;color:#5b6470;font-size:15px;line-height:1.6;padding:8px 12px}
 .typing-dots{display:block;text-align:center;margin-top:8px;font-size:30px;line-height:1;letter-spacing:4px}
@@ -77,28 +75,45 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
 .attention-overlay{position:fixed;inset:0;background:rgba(20,28,38,.42);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}
 .attention-modal{width:min(420px,calc(100vw - 40px));background:#fff;border-radius:14px;box-shadow:0 18px 50px #0004;padding:22px;text-align:center}
 .attention-modal p{margin:0 0 18px;font-size:15px;line-height:1.6;color:#334155;font-weight:600}
-.start-btn{display:inline-block;width:100%;border:0;border-radius:10px;padding:12px 16px;background:#3475c5;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s}
-.start-btn:hover{background:#285fa3}
-
-@media(max-width:850px){
-  body{background:#fff}
-  main{margin:0;padding:0;max-width:none}
-  .hero,.info{display:none}
-  .grid{display:block;margin:0}
-  .head{padding:10px 13px;background:#fff}
-  .av{width:39px;height:39px;font-size:12px}
-  .msgs{padding:13px 11px}
-  .row{margin:9px 0;gap:6px}
-  .mini{width:27px;height:27px;font-size:9px}
-  .bubble{max-width:84%;font-size:14px;padding:9px 11px}
-}
+.start-btn{display:inline-block;width:100%;border:0;border-radius:10px;padding:12px 16px;background:#3475c5;color:#fff;font-size:15px;font-weight:700;cursor:pointer}
 
 @media(min-width:851px){
-  body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f6f8}
-  main{width:100%;max-width:none;margin:0;padding:24px;display:flex;justify-content:center;align-items:center}
-  .hero,.info{display:none!important}
-  .grid{display:flex;justify-content:center;align-items:center;margin:0;width:100%}
-  .chat{width:450px;max-width:min(450px,calc(100vw - 48px));height:860px;max-height:calc(100vh - 48px);margin:0 auto}
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f6f8;
+    margin: 0;
+  }
+  
+  main {
+    width: 100%;
+    height: 100vh; /* 親要素の高さを画面全体にする */
+    max-width: none;
+    margin: 0;
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    width: 100%;
+    height: 100%; /* 親要素の高さを継承 */
+  }
+
+  .chat {
+    width: 450px;
+    max-width: min(450px, calc(100vw - 48px));
+    height: calc(860px - 48px) !important; /* 画面上下に24pxずつの余白を残して最大縦伸び */
+    max-height: none !important;
+    margin: 0 auto;
+  }
 }
 </style>
 </head>
@@ -115,13 +130,16 @@ main{max-width:1100px;margin:25px auto;padding:0 18px}
         </div>
       </div>
       <div id="msgs" class="msgs"></div>
+      
+      <!-- テキスト入力欄 -->
+      <div class="input-container">
+        <textarea id="txt" placeholder="メッセージを入力..." disabled></textarea>
+        <button id="send" disabled>送信</button>
+      </div>
     </section>
   </div>
-  <textarea id="txt" style="display:none" aria-hidden="true"></textarea>
-  <button id="send" style="display:none" aria-hidden="true"></button>
 </main>
 
-<!-- 開始前の初期フロートボックス（attention-overlay） -->
 <div id="start-overlay" class="attention-overlay">
   <div class="attention-modal">
     <p>準備ができたら開始ボタンを押してください</p>
@@ -136,11 +154,13 @@ let answers = { userName:"", age:"", family:"", currentInsurance:"", purpose:"",
 
 const $ = x => document.getElementById(x);
 const msgs = $("msgs");
+const txt = $("txt");
+const sendBtn = $("send");
 
 const AI_ICON = `<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="8" width="18" height="15" rx="4"/><circle cx="12.5" cy="15" r="1.2"/><circle cx="19.5" cy="15" r="1.2"/><circle cx="16" cy="3.5" r="1"/><path d="M7 13H4.5v5H7M25 13h2.5v5H25"/><path d="M13.4 16.8 Q16 19.2 18.6 16.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`;
 
 const sleep = m => new Promise(r => setTimeout(r, m));
-const MESSAGE_GAP = 800;
+const MESSAGE_GAP = 500;
 
 function add(t, me = false, type = false) {
   let r = document.createElement("div");
@@ -154,7 +174,7 @@ function add(t, me = false, type = false) {
   let b = document.createElement("div");
   b.className = "bubble";
   if(type) b.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
-  else b.textContent = t;
+  else b.innerHTML = t.replace(/\n/g, "<br>");
   r.appendChild(b);
   msgs.appendChild(r);
   msgs.scrollTop = msgs.scrollHeight;
@@ -163,7 +183,7 @@ function add(t, me = false, type = false) {
 
 async function say(t, id) {
   let q = add("", false, true);
-  await sleep(1000);
+  await sleep(800);
   if(id !== run) return false;
   q.remove();
   add(t);
@@ -172,15 +192,37 @@ async function say(t, id) {
   return true;
 }
 
-async function userSay(t, id, delay = 5000) {
-  let q = add("", true, true);
-  await sleep(delay);
-  if(id !== run) { q.remove(); return false; }
-  q.remove();
-  add(t, true);
-  await sleep(MESSAGE_GAP);
-  if(id !== run) return false;
-  return true;
+// ユーザー入力待ち関数
+function getUserInput() {
+  return new Promise(resolve => {
+    txt.disabled = false;
+    sendBtn.disabled = false;
+    txt.focus();
+
+    const handleSend = () => {
+      const val = txt.value.trim();
+      if(!val) return;
+      
+      txt.value = "";
+      txt.disabled = true;
+      sendBtn.disabled = true;
+      sendBtn.removeEventListener("click", handleSend);
+      txt.removeEventListener("keydown", handleKey);
+      
+      add(val, true);
+      resolve(val);
+    };
+
+    const handleKey = (e) => {
+      if(e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
+    };
+
+    sendBtn.addEventListener("click", handleSend);
+    txt.addEventListener("keydown", handleKey);
+  });
 }
 
 function result() {
@@ -190,7 +232,7 @@ function result() {
   a.className = "mini ai";
   a.innerHTML = AI_ICON;
   let wrap = document.createElement("div");
-  wrap.innerHTML = '<div style="font-size:14px;margin-bottom:7px">おすすめの保険プランが見つかりました。</div>' +
+  wrap.innerHTML = `<div style="font-size:14px;margin-bottom:7px">${answers.userName}様、おすすめの保険プランが見つかりました。</div>` +
                    '<div class="result" id="card"><div class="pic"></div><div>' +
                    '<div class="rtitle">トータル医療・生命保障プラン</div>' +
                    '<div class="rtext">病気やケガの入院費と生活習慣病への備えを含む、おすすめの保障プランです。</div>' +
@@ -211,138 +253,132 @@ function showAttentionCheck(id) {
   document.body.appendChild(ov);
 }
 
-function slowScrollTo(target, duration = 1800) {
-  const start = msgs.scrollTop;
-  const change = target - start;
-  const startTime = performance.now();
-  function step(now) {
-    const p = Math.min(1, (now - startTime) / duration);
-    const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-    msgs.scrollTop = start + change * eased;
-    if(p < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
 function setup() {
   run++;
   let id = run;
-  answers = { userName:"", age:"", family:"", currentInsurance:"", purpose:"", budget:"", health:"" };
   msgs.innerHTML = "";
 
   $("topav").className = "av ai";
   $("topav").innerHTML = AI_ICON;
   $("nm").textContent = "あなたがチャットで相談している相手は「保険エキスパートAI」です。";
-  $("rl").textContent = "";
+  $("rl").textContent = "保険エキスパートAIは、最適な保険を数理的に分析・予測するAIエージェントです。";
 
   startFlow(id);
 }
 
 async function startFlow(id) {
+  // 1. 名前の入力
   if(!await say("保険プラン分析を開始します。まず、お名前（またはニックネーム）を入力してください。", id)) return;
-  showProfileCard(id, async () => {
-    manipulation(id);
+  
+  answers.userName = await getUserInput();
+  
+  if(!await say(`${answers.userName}さん、ご入力ありがとうございます。`, id)) return;
+  if(!await say("続いて、以下の項目を選択してプロフィール情報を教えてください。", id)) return;
+
+  // 2. プロフィールカードを表示して手動選択
+  await showProfileCard(id);
+
+  // 3. 次の会話展開へ
+  manipulation(id);
+}
+
+function showProfileCard(id) {
+  return new Promise(resolve => {
+    const profile = [
+      {key:"age", label:"年代", opts:["20代以下","30代","40代","50代以上"]},
+      {key:"family", label:"家族構成", opts:["独身","夫婦のみ","配偶者と子供","その他"]},
+      {key:"currentInsurance", label:"現在の保険加入", opts:["加入していない","医療保険のみ","生命保険のみ","複数加入中"]},
+      {key:"purpose", label:"最も重視したい備え", opts:["病気やケガの入院費","万が一の遺族保障","がんなどの重い病気","老後の資金準備"]},
+      {key:"budget", label:"月々の予算", opts:["5,000円未満","5,000円〜1万円","1万円〜2万円","2万円以上"]},
+      {key:"health", label:"直近5年以内の健康状態・入院歴", opts:["特に持病・入院歴なし","持病・持続的な服薬あり","過去5年以内に入院歴あり"]}
+    ];
+
+    let selectedTemp = {};
+
+    let r = document.createElement("div");
+    r.className = "row";
+    let a = document.createElement("div");
+    a.className = "mini ai";
+    a.innerHTML = AI_ICON;
+    let b = document.createElement("div");
+    b.className = "profile-card";
+    
+    let html = '<div class="profile-title">プロフィール情報</div>';
+    profile.forEach(x => {
+      html += `<div class="profile-row">
+        <div class="profile-label">${x.label}</div>
+        <div class="profile-options" data-key="${x.key}">
+          ${x.opts.map(o => `<span class="profile-opt" data-value="${o}">${o}</span>`).join('')}
+        </div>
+      </div>`;
+    });
+    html += '<button class="profile-submit-btn" id="profile-submit" disabled>決定して送信する</button>';
+    b.innerHTML = html;
+    r.append(a, b);
+    msgs.appendChild(r);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    // 選択肢クリックイベント
+    b.querySelectorAll('.profile-opt').forEach(opt => {
+      opt.onclick = () => {
+        const parent = opt.closest('.profile-options');
+        const key = parent.dataset.key;
+        
+        parent.querySelectorAll('.profile-opt').forEach(el => el.classList.remove('selected'));
+        opt.classList.add('selected');
+        
+        selectedTemp[key] = opt.dataset.value;
+
+        // 全6項目選択完了したら送信ボタン有効化
+        if(Object.keys(selectedTemp).length === profile.length) {
+          b.querySelector('#profile-submit').disabled = false;
+        }
+      };
+    });
+
+    // 決定ボタンクリック
+    b.querySelector('#profile-submit').onclick = () => {
+      Object.assign(answers, selectedTemp);
+      b.querySelector('#profile-submit').textContent = "送信完了";
+      b.querySelector('#profile-submit').disabled = true;
+      b.querySelectorAll('.profile-opt').forEach(el => el.style.pointerEvents = 'none');
+      resolve();
+    };
   });
 }
 
-function showProfileCard(id, cb) {
-  const profile = [
-    {key:"age", label:"年代", opts:["20代以下","30代","40代","50代以上"], value:"20代以下"},
-    {key:"family", label:"家族構成", opts:["独身","夫婦のみ","配偶者と子供","その他"], value:"独身"},
-    {key:"currentInsurance", label:"現在の保険加入", opts:["加入していない","医療保険のみ","生命保険のみ","複数加入中"], value:"加入していない"},
-    {key:"purpose", label:"最も重視したい備え", opts:["病気やケガの入院費","万が一の遺族保障","がんなどの重い病気","老後の資金準備"], value:"病気やケガの入院費"},
-    {key:"budget", label:"月々の予算", opts:["5,000円未満","5,000円〜1万円","1万円〜2万円","2万円以上"], value:"5,000円〜1万円"},
-    {key:"health", label:"直近5年以内の健康状態・入院歴", opts:["特に持病・入院歴なし","持病・持続的な服薬あり","過去5年以内に入院歴あり"], value:"特に持病・入院歴なし"}
-  ];
-
-  answers.userName = "ゆう";
-  profile.forEach(x => answers[x.key] = x.value);
-
-  let userTyping = add("", true, true);
-  setTimeout(() => {
-    if(id !== run) { userTyping.remove(); return; }
-    userTyping.remove();
-    add("ゆう", true);
-
-    setTimeout(() => {
-      if(id !== run) return;
-      let q = add("", false, true);
-      setTimeout(() => {
-        if(id !== run) return;
-        q.remove();
-        add("保険プランの提案に必要な項目を選択してください。");
-        const instructionTop = msgs.scrollTop;
-
-        let r = document.createElement("div");
-        r.className = "row";
-        let a = document.createElement("div");
-        a.className = "mini ai";
-        a.innerHTML = AI_ICON;
-        let b = document.createElement("div");
-        b.className = "profile-card";
-        b.innerHTML = '<div class="profile-title">プロフィール情報</div>' + 
-          profile.map(x => '<div class="profile-row"><div class="profile-label">' + x.label + '</div><div class="profile-options" data-key="' + x.key + '">' + x.opts.map(o => '<span class="profile-opt" data-value="' + o + '">' + o + '</span>').join('') + '</div></div>').join('') +
-          '<div class="profile-done" id="profile-done" style="display:none">プロフィールの選択が完了しました</div>';
-        r.append(a, b);
-        msgs.appendChild(r);
-
-        msgs.scrollTop = instructionTop;
-        const top = Math.max(0, r.offsetTop - 150);
-        setTimeout(() => { if(id === run) slowScrollTo(top, 2200); }, 250);
-
-        profile.forEach((x, i) => {
-          setTimeout(() => {
-            if(id !== run) return;
-            const wrap = b.querySelector('[data-key="' + x.key + '"]');
-            const target = [...wrap.querySelectorAll('.profile-opt')].find(z => z.dataset.value === x.value);
-            if(target) target.classList.add('selected');
-            
-            const wrapRect = wrap.getBoundingClientRect();
-            const msgRect = msgs.getBoundingClientRect();
-            const targetTop = msgRect.top + msgRect.height * 0.62;
-            if(wrapRect.bottom > targetTop) {
-              const delta = Math.min(72, Math.max(22, wrapRect.bottom - targetTop));
-              slowScrollTo(msgs.scrollTop + delta, 1400);
-            }
-          }, 3000 + i * 3000);
-        });
-
-        setTimeout(() => {
-          if(id !== run) return;
-          const done = b.querySelector("#profile-done");
-          done.style.display = "block";
-          slowScrollTo(msgs.scrollTop + 58, 1200);
-        }, profile.length * 3000 + MESSAGE_GAP);
-
-        setTimeout(() => {
-          if(id !== run) return;
-          cb();
-        }, profile.length * 3000 + MESSAGE_GAP * 2);
-      }, 10000);
-    }, MESSAGE_GAP);
-  }, 5000);
-}
-
 async function manipulation(id) {
-  if(!await say("プロフィール情報を登録しました。年代：" + answers.age + "、家族構成：" + answers.family + "、現在の加入：" + answers.currentInsurance + "、保障目的：" + answers.purpose + "、月額予算：" + answers.budget + "、健康状態：" + answers.health, id)) return;
-  if(!await say("追加で確認したい保障項目があれば入力してください。", id)) return;
-  if(!await userSay("生活習慣病への保障が気になります", id, 5000)) return;
-  if(!await say("「生活習慣病への保障」を追加条件として登録しました。関連する特約を検索し、候補プランの評価条件に反映します。", id)) return;
-  if(!await userSay("ありがとうございます", id, 5000)) return;
-  if(!await say("入力を受け付けました。登録済みの回答内容と追加条件をもとに、適合度の高い保険プランを算出します。", id)) return;
+  if(!await say(`プロフィール情報を登録しました。\n・年代：${answers.age}\n・家族構成：${answers.family}\n・現在の加入：${answers.currentInsurance}\n・保障目的：${answers.purpose}\n・月額予算：${answers.budget}\n・健康状態：${answers.health}`, id)) return;
+  
+// 1. 「生活習慣病の保障は必要ですか？」と問いかけ、ボタン選択を待つ
+  if(!await say("生活習慣病の保障は必要ですか？", id)) return;
+  
+  let diseaseCoverage = await getYesNoChoice(id); // 「はい」または「いいえ」を取得
+  answers.lifestyleDisease = diseaseCoverage;
 
+  // 2. 「はい」と「いいえ」で回答を分岐
+  if (diseaseCoverage === "はい") {
+    if(!await say("生活習慣病保障の手厚いプランを優先して検索・評価します。", id)) return;
+  } else {
+    if(!await say("生活習慣病保障を除外し、月額費用を抑えた基本プランを優先して検索・評価します。", id)) return;
+  }
+
+  if(!await say("回答内容をもとに、適合度の高い保険プランを算出します。", id)) return;
+  
+  // プラン生成アニメーション（5秒待機）
   let w = document.createElement("div");
   w.className = "center-wait";
-  w.innerHTML = '保険プランを作成中です<div class="typing-dots"><span>.</span><span>.</span><span>.</span></div>';
+  w.innerHTML = `${answers.userName}様のための保険プランを作成中です<div class="typing-dots"><span>.</span><span>.</span><span>.</span></div>`;
   msgs.appendChild(w);
   msgs.scrollTop = msgs.scrollHeight;
 
-  await sleep(20000);
+  await sleep(5000);
   if(id !== run) return;
   w.remove();
 
   result();
   
+  // localStorageへ結果保存
   localStorage.setItem("condition", COND);
   localStorage.setItem("userName", answers.userName);
   localStorage.setItem("age", answers.age);
@@ -352,51 +388,95 @@ async function manipulation(id) {
   localStorage.setItem("budget", answers.budget);
   localStorage.setItem("health", answers.health);
 
-  // ギフトキャンペーンの案内メッセージを表示
+  // キャンペーン・ギフト選択
   if(!await say("キャンペーン：本日保険プランをご成約いただくと、以下の2つのギフトを選んで受け取ることができます。", id)) return;
 
-  // ギフトの選択肢リストを表示
-  let choiceRow = document.createElement("div");
-  choiceRow.className = "row";
-  let choiceIcon = document.createElement("div");
-  choiceIcon.className = "mini ai";
-  choiceIcon.innerHTML = AI_ICON;
+  await getGiftChoice(id);
 
-  let choiceWrap = document.createElement("div");
-  choiceWrap.className = "choices";
-  choiceWrap.style.flexDirection = "column";
-
-  const giftOptions = [
-    { text: "本日1,000円分のギフト券を受け取る", val: "gift_today_1000" },
-    { text: "1週間後に1,500円分のギフト券を受け取る", val: "gift_week_1500" }
-  ];
-
-  giftOptions.forEach(opt => {
-    let btn = document.createElement("button");
-    btn.className = "choice";
-    btn.style.textAlign = "left";
-    btn.style.padding = "10px 14px";
-    btn.textContent = opt.text;
-    
-    btn.onclick = () => {
-      localStorage.setItem("selectedGift", opt.val);
-      [...choiceWrap.children].forEach(c => c.classList.remove("auto-selected"));
-      btn.classList.add("auto-selected");
-    };
-    
-    choiceWrap.appendChild(btn);
-  });
-
-  choiceRow.append(choiceIcon, choiceWrap);
-  msgs.appendChild(choiceRow);
-  msgs.scrollTop = msgs.scrollHeight;
-
-  await sleep(10000);
+  await sleep(3000);
   if(id !== run) return;
   showAttentionCheck(id);
 }
 
-// 開始ボタンのクリック処理イベントをセット
+// ギフトの選択処理
+// ギフトの選択処理（選択不可・閲覧のみ）
+function getGiftChoice(id) {
+  return new Promise(resolve => {
+    let choiceRow = document.createElement("div");
+    choiceRow.className = "row";
+    let choiceIcon = document.createElement("div");
+    choiceIcon.className = "mini ai";
+    choiceIcon.innerHTML = AI_ICON;
+
+    let choiceWrap = document.createElement("div");
+    choiceWrap.className = "choices";
+
+    const giftOptions = [
+      { text: "本日1,000円分のギフト券を受け取る", val: "gift_today_1000" },
+      { text: "1週間後に1,500円分のギフト券を受け取る", val: "gift_week_1500" }
+    ];
+
+    giftOptions.forEach(opt => {
+      let btn = document.createElement("button");
+      btn.className = "choice";
+      btn.textContent = opt.text;
+      
+      // ★ 選択できないように無効化
+      btn.disabled = true;
+      btn.style.cursor = "not-allowed";
+      btn.style.opacity = "0.7";
+      
+      choiceWrap.appendChild(btn);
+    });
+
+    choiceRow.append(choiceIcon, choiceWrap);
+    msgs.appendChild(choiceRow);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    // クリックを待たずに少し時間をおいて自動的に次に進む場合
+    setTimeout(() => {
+      resolve();
+    }, MESSAGE_GAP);
+  });
+}
+
+// 「はい」「いいえ」の選択処理
+function getYesNoChoice(id) {
+  return new Promise(resolve => {
+    let choiceRow = document.createElement("div");
+    choiceRow.className = "row";
+    let choiceIcon = document.createElement("div");
+    choiceIcon.className = "mini ai";
+    choiceIcon.innerHTML = AI_ICON;
+
+    let choiceWrap = document.createElement("div");
+    choiceWrap.className = "choices";
+    choiceWrap.style.flexDirection = "row"; // 横並びに配置
+
+    const options = ["はい", "いいえ"];
+
+    options.forEach(opt => {
+      let btn = document.createElement("button");
+      btn.className = "choice";
+      btn.style.padding = "8px 24px";
+      btn.style.fontSize = "14px";
+      btn.textContent = opt;
+      
+      btn.onclick = () => {
+        choiceWrap.querySelectorAll("button").forEach(b => b.disabled = true);
+        add(opt, true); // ユーザーの発言としてメッセージ欄に追加
+        resolve(opt);
+      };
+      
+      choiceWrap.appendChild(btn);
+    });
+
+    choiceRow.append(choiceIcon, choiceWrap);
+    msgs.appendChild(choiceRow);
+    msgs.scrollTop = msgs.scrollHeight;
+  });
+}
+
 $("start-btn").onclick = () => {
   $("start-overlay").style.display = "none";
   setup();
